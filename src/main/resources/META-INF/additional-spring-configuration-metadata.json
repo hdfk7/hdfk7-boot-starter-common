@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "mybatis-plus.dialect",
+      "type": "java.lang.String",
+      "description": "mybatis-plus分页插件方言配置."
+    },
+    {
+      "name": "skywalking.trace.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否允许skywalking的tid在header上返回."
+    }
+  ]
+}
