@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class SeataRollback {
-    public void doRollback(Throwable e) throws TransactionException {
+    public void rollback(Throwable e) throws TransactionException {
         if (StrUtil.isNotEmpty(RootContext.getXID())) {
             GlobalTransactionContext.reload(RootContext.getXID()).rollback();
         }
