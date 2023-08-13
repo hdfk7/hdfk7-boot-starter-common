@@ -7,7 +7,7 @@ import io.seata.tm.api.GlobalTransactionContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SeataRollback {
+public abstract class SeataRollback {
     public void doRollback(Throwable e) throws TransactionException {
         if (StrUtil.isNotEmpty(RootContext.getXID())) {
             GlobalTransactionContext.reload(RootContext.getXID()).rollback();
