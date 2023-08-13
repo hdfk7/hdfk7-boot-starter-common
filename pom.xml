@@ -76,6 +76,11 @@
             <artifactId>xxl-job-core</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
