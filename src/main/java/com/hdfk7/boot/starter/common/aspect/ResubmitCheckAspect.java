@@ -10,12 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +34,8 @@ public abstract class ResubmitCheckAspect {
         if (StringUtils.isEmpty(authorization)) {
             return;
         }
-        String methodType = request.getMethod().toUpperCase(Locale.ROOT);
-        if (!Arrays.asList(formRepeatSubmitValidation.methods()).contains(methodType)) {
+        String methodType = request.getMethod();
+        if (Arrays.stream(formRepeatSubmitValidation.methods()).noneMatch(o -> o.equalsIgnoreCase(methodType))) {
             return;
         }
         String methodName = joinPoint.getSignature().getName();
