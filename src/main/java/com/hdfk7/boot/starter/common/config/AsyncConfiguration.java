@@ -26,7 +26,7 @@ public class AsyncConfiguration implements DisposableBean {
         executor.setCorePoolSize(core);
         executor.setMaxPoolSize(core * 2 + 1);
         executor.setKeepAliveSeconds(60);
-        executor.setAwaitTerminationMillis(1000L * 60 * 3);
+        executor.setAwaitTerminationMillis(1000L * 60);
         executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("short-task-executor-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
@@ -43,7 +43,7 @@ public class AsyncConfiguration implements DisposableBean {
         executor.setCorePoolSize(core);
         executor.setMaxPoolSize(core * 10 + 1);
         executor.setKeepAliveSeconds(60);
-        executor.setAwaitTerminationMillis(1000L * 60 * 3);
+        executor.setAwaitTerminationMillis(1000L * 60);
         executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("long-task-executor-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
