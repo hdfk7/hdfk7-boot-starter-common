@@ -11,6 +11,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Configuration
@@ -24,6 +25,16 @@ public class AsyncConfiguration {
 
             ThreadPoolTaskExecutor longTaskExecutor = SpringUtil.getBean("longTaskExecutor", ThreadPoolTaskExecutor.class);
             Optional.ofNullable(longTaskExecutor).ifPresent(ExecutorConfigurationSupport::shutdown);
+
+            while ((shortTaskExecutor != null && shortTaskExecutor.getActiveCount() > 0)
+                    || (longTaskExecutor != null && longTaskExecutor.getActiveCount() > 0)) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    log.error(e.getLocalizedMessage(), e);
+                    break;
+                }
+            }
 
             log.info("AsyncTaskExecutor - Shutdown completed.");
         }));
