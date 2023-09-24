@@ -1,22 +1,17 @@
 package com.hdfk7.boot.starter.common.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ExecutorConfigurationSupport;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 @Configuration
-public class AsyncConfiguration implements DisposableBean {
-    private ThreadPoolTaskExecutor shortTaskExecutor;
-    private ThreadPoolTaskExecutor longTaskExecutor;
+public class AsyncConfiguration {
 
     @Bean
     @Primary
@@ -32,7 +27,6 @@ public class AsyncConfiguration implements DisposableBean {
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.initialize();
-        shortTaskExecutor = executor;
         return executor;
     }
 
@@ -49,18 +43,6 @@ public class AsyncConfiguration implements DisposableBean {
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.initialize();
-        longTaskExecutor = executor;
         return executor;
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        log.info("AsyncTaskExecutor - Shutdown initiated...");
-
-        Optional.ofNullable(shortTaskExecutor).ifPresent(ExecutorConfigurationSupport::destroy);
-
-        Optional.ofNullable(longTaskExecutor).ifPresent(ExecutorConfigurationSupport::destroy);
-
-        log.info("AsyncTaskExecutor - Shutdown completed.");
     }
 }
