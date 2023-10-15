@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 @AllArgsConstructor
-@ConditionalOnClass(value = {XxlJobSpringExecutor.class, XxlJobProperties.class})
+@ConditionalOnClass(value = {XxlJobSpringExecutor.class})
 public class XxlJobConfiguration {
     private final XxlJobProperties xxlJobProperties;
 
