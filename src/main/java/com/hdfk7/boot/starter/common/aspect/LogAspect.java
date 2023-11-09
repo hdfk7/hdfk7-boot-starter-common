@@ -11,6 +11,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public abstract class LogAspect {
         List<Object> argList = new ArrayList<>();
         // 过滤参数校验信息
         for (Object object : pointArgs) {
-            if (!(object instanceof BindingResult || object instanceof ServletRequest)) {
+            if (!(object instanceof BindingResult || object instanceof ServletRequest || object instanceof MultipartFile)) {
                 argList.add(object);
             }
         }
