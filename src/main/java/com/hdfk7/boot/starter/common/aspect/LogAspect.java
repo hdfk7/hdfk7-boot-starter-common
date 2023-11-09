@@ -4,6 +4,7 @@ import com.hdfk7.boot.starter.common.constants.RequestParamConst;
 import com.hdfk7.boot.starter.common.util.IpUtil;
 import com.hdfk7.proto.base.util.JsonUtil;
 import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -40,7 +41,10 @@ public abstract class LogAspect {
         List<Object> argList = new ArrayList<>();
         // 过滤参数校验信息
         for (Object object : pointArgs) {
-            if (!(object instanceof BindingResult || object instanceof ServletRequest || object instanceof MultipartFile)) {
+            if (!(object instanceof BindingResult
+                    || object instanceof ServletRequest
+                    || object instanceof ServletResponse
+                    || object instanceof MultipartFile)) {
                 argList.add(object);
             }
         }
