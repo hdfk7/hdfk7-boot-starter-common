@@ -1,7 +1,7 @@
 package com.hdfk7.boot.starter.common.util;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.hdfk7.proto.base.util.JsonUtil;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -15,7 +15,7 @@ public class KafkaUtil {
     private static final KafkaTemplate<String, String> kafkaTemplate = SpringUtil.getBean("kafkaTemplate");
 
     public static void send(String channel, Object obj, BiConsumer<SendResult<String, String>, Throwable> callback) {
-        CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(channel, obj instanceof String ? (String) obj : JsonUtil.toJsonStr(obj));
+        CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(channel, obj instanceof String ? (String) obj : JSONUtil.toJsonStr(obj));
         if (callback != null) {
             future.whenComplete(callback);
         }
@@ -27,7 +27,7 @@ public class KafkaUtil {
 
     public static SendResult<String, String> sendSync(String channel, Object obj) {
         try {
-            CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(channel, obj instanceof String ? (String) obj : JsonUtil.toJsonStr(obj));
+            CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(channel, obj instanceof String ? (String) obj : JSONUtil.toJsonStr(obj));
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
             log.error(e.getMessage(), e);

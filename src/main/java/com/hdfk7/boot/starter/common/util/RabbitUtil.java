@@ -1,7 +1,7 @@
 package com.hdfk7.boot.starter.common.util;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.hdfk7.proto.base.util.JsonUtil;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -11,7 +11,7 @@ public class RabbitUtil {
     private static final RabbitTemplate rabbitTemplate = SpringUtil.getBean("rabbitTemplate");
 
     public static void send(String exchange, String routingKey, Object message, MessagePostProcessor processor) {
-        rabbitTemplate.convertAndSend(exchange, routingKey, message instanceof String ? message : JsonUtil.toJsonStr(message), processor);
+        rabbitTemplate.convertAndSend(exchange, routingKey, message instanceof String ? message : JSONUtil.toJsonStr(message), processor);
     }
 
     public static void send(String routingKey, Object message) {
@@ -30,7 +30,7 @@ public class RabbitUtil {
     }
 
     public static Object sendAndGet(String exchange, String routingKey, Object message, MessagePostProcessor processor) {
-        return rabbitTemplate.convertSendAndReceive(exchange, routingKey, message instanceof String ? message : JsonUtil.toJsonStr(message), processor);
+        return rabbitTemplate.convertSendAndReceive(exchange, routingKey, message instanceof String ? message : JSONUtil.toJsonStr(message), processor);
     }
 
     public static Object sendAndGet(String routingKey, Object message) {

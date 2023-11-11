@@ -1,8 +1,8 @@
 package com.hdfk7.boot.starter.common.aspect;
 
+import cn.hutool.json.JSONUtil;
 import com.hdfk7.boot.starter.common.constants.RequestParamConst;
 import com.hdfk7.boot.starter.common.util.IpUtil;
-import com.hdfk7.proto.base.util.JsonUtil;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,14 +48,14 @@ public abstract class LogAspect {
                 argList.add(object);
             }
         }
-        requestContext.setAttribute(RequestParamConst.PARAMETERS, JsonUtil.toJsonStr(argList));
+        requestContext.setAttribute(RequestParamConst.PARAMETERS, JSONUtil.toJsonStr(argList));
         String methodName = (String) requestContext.getAttribute(RequestParamConst.METHOD_NAME);
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (Objects.nonNull(attributes) && !ignoreRequest(methodName, attributes.getRequest().getMethod())) {
             String url = attributes.getRequest().getRequestURL().toString();
             String httpMethod = attributes.getRequest().getMethod();
             //增加请求处理前日志， 用于定位请求错误时拿到相应的参数
-            log.info(String.format("requestBegin: url[%s],httpMethod[%s],request[%s]", url, httpMethod, JsonUtil.toJsonStr(argList)));
+            log.info(String.format("requestBegin: url[%s],httpMethod[%s],request[%s]", url, httpMethod, JSONUtil.toJsonStr(argList)));
         }
     }
 
@@ -83,7 +83,7 @@ public abstract class LogAspect {
     public void finishTask(Object ret) {
         String response = "";
         if (Objects.nonNull(ret)) {
-            response = JsonUtil.toJsonStr(ret);
+            response = JSONUtil.toJsonStr(ret);
         }
 
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
