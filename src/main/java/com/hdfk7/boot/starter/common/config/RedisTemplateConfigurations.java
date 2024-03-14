@@ -17,13 +17,18 @@ public class RedisTemplateConfigurations {
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
+
         GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer(JacksonObjectMapperInstance.getMapper());
+
         redisTemplate.setKeySerializer(new GenericToStringSerializer<>(Object.class));
         redisTemplate.setValueSerializer(genericJackson2JsonRedisSerializer);
+
         redisTemplate.setHashKeySerializer(new GenericToStringSerializer<>(Object.class));
         redisTemplate.setHashValueSerializer(genericJackson2JsonRedisSerializer);
+
         redisTemplate.setEnableTransactionSupport(true);
         redisTemplate.afterPropertiesSet();
+
         return redisTemplate;
     }
 }
