@@ -24,13 +24,12 @@ public abstract class LogAspect {
     private static final String HEAD = "HEAD";
 
     public void init(JoinPoint joinPoint) {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (requestAttributes == null) {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (sra == null) {
             return;
         }
-        HttpServletRequest requestContext = requestAttributes.getRequest();
-        requestContext.setAttribute(RequestParamConst.REQUEST_START_TIME, System.currentTimeMillis());
-        requestContext.setAttribute(RequestParamConst.METHOD_NAME, joinPoint.getSignature().getName());
+
+        HttpServletRequest request = sra.getRequest();
         Object[] pointArgs = joinPoint.getArgs();
         List<Object> argList = new ArrayList<>();
         for (Object object : pointArgs) {
@@ -41,18 +40,16 @@ public abstract class LogAspect {
                 argList.add(object);
             }
         }
-        requestContext.setAttribute(RequestParamConst.PARAMETERS, JSONUtil.toJsonStr(argList));
-        String methodName = (String) requestContext.getAttribute(RequestParamConst.METHOD_NAME);
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (Objects.nonNull(attributes) && !ignoreRequest(methodName, attributes.getRequest().getMethod())) {
-            String url = attributes.getRequest().getRequestURL().toString();
-            String httpMethod = attributes.getRequest().getMethod();
+        request.setAttribute(RequestParamConst.REQUEST_START_TIME, System.currentTimeMillis());
+        request.setAttribute(RequestParamConst.METHOD_NAME, joinPoint.getSignature().getName());
+        request.setAttribute(RequestParamConst.PARAMETERS, JSONUtil.toJsonStr(argList));
+
+        String methodName = (String) request.getAttribute(RequestParamConst.METHOD_NAME);
+        if (!ignoreRequest(methodName, sra.getRequest().getMethod())) {
+            String url = sra.getRequest().getRequestURL().toString();
+            String httpMethod = sra.getRequest().getMethod();
             log.info(String.format("requestBegin: url[%s],httpMethod[%s],request[%s]", url, httpMethod, JSONUtil.toJsonStr(argList)));
         }
-    }
-
-    private boolean ignoreRequest(String methodName, String method) {
-        return ERROR_PATH_METHOD_NAME.equalsIgnoreCase(methodName) || HEAD.equalsIgnoreCase(method);
     }
 
     public Object doTask(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -60,22 +57,22 @@ public abstract class LogAspect {
     }
 
     public void finishTask(Object ret) {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (sra == null) {
+            return;
+        }
+
         String response = "";
         if (Objects.nonNull(ret)) {
             response = JSONUtil.toJsonStr(ret);
         }
-
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (requestAttributes == null) {
-            return;
-        }
-        HttpServletRequest requestContext = requestAttributes.getRequest();
-        String methodName = (String) requestContext.getAttribute(RequestParamConst.METHOD_NAME);
-        String parameters = (String) requestContext.getAttribute(RequestParamConst.PARAMETERS);
-        Object startTime = requestContext.getAttribute(RequestParamConst.REQUEST_START_TIME);
-        requestContext.removeAttribute(RequestParamConst.METHOD_NAME);
-        requestContext.removeAttribute(RequestParamConst.PARAMETERS);
-        requestContext.removeAttribute(RequestParamConst.REQUEST_START_TIME);
+        HttpServletRequest request = sra.getRequest();
+        String methodName = (String) request.getAttribute(RequestParamConst.METHOD_NAME);
+        String parameters = (String) request.getAttribute(RequestParamConst.PARAMETERS);
+        Object startTime = request.getAttribute(RequestParamConst.REQUEST_START_TIME);
+        request.removeAttribute(RequestParamConst.METHOD_NAME);
+        request.removeAttribute(RequestParamConst.PARAMETERS);
+        request.removeAttribute(RequestParamConst.REQUEST_START_TIME);
         if (ERROR_PATH_METHOD_NAME.equalsIgnoreCase(methodName) || HEAD.equalsIgnoreCase(methodName)) {
             return;
         }
@@ -84,19 +81,16 @@ public abstract class LogAspect {
         long requestFinishTime = System.currentTimeMillis();
         long cost = requestFinishTime - requestStartTime;
 
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (Objects.isNull(attributes)) {
-            log.info(String.format("cost[%d],request[%s],response[%s]\r\n", cost, parameters, response));
-            return;
-        }
-        HttpServletRequest servletRequest = attributes.getRequest();
-
-        String url = servletRequest.getRequestURL().toString();
-        String httpMethod = servletRequest.getMethod();
-        String remoteHost = IpUtil.getIpAddress(servletRequest);
-        int remotePort = servletRequest.getRemotePort();
+        String url = request.getRequestURL().toString();
+        String httpMethod = request.getMethod();
+        String remoteHost = IpUtil.getIpAddress(request);
+        int remotePort = request.getRemotePort();
 
         log.info(String.format("cost[%d],url[%s],httpMethod[%s],remoteHost[%s],remotePort[%d]," +
                 "request[%s],response[%s]\r\n", cost, url, httpMethod, remoteHost, remotePort, parameters, response));
+    }
+
+    protected boolean ignoreRequest(String methodName, String method) {
+        return ERROR_PATH_METHOD_NAME.equalsIgnoreCase(methodName) || HEAD.equalsIgnoreCase(method);
     }
 }

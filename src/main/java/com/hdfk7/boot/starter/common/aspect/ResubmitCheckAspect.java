@@ -7,7 +7,7 @@ import com.hdfk7.proto.base.exception.ResubmitException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -15,29 +15,31 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public abstract class ResubmitCheckAspect {
     protected static final String TOKEN = "TOKEN";
 
-    protected void doAdvice(JoinPoint joinPoint, ResubmitCheck formRepeatSubmitValidation) {
+    public Object doTask(ProceedingJoinPoint joinPoint, ResubmitCheck resubmitCheck) throws Throwable {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra == null) {
-            return;
+            return joinPoint.proceed();
         }
+
         HttpServletRequest request = sra.getRequest();
         String authorization = request.getHeader(TOKEN);
         if (StringUtils.isEmpty(authorization)) {
             authorization = request.getParameter(TOKEN);
         }
         if (StringUtils.isEmpty(authorization)) {
-            return;
+            return joinPoint.proceed();
         }
+
         String methodType = request.getMethod();
-        if (Arrays.stream(formRepeatSubmitValidation.methods()).noneMatch(o -> o.equalsIgnoreCase(methodType))) {
-            return;
+        if (Arrays.stream(resubmitCheck.methods()).noneMatch(o -> o.equalsIgnoreCase(methodType))) {
+            return joinPoint.proceed();
         }
+
         String methodName = joinPoint.getSignature().getName();
         Map<String, String[]> map = request.getParameterMap();
         StringBuilder sb = new StringBuilder();
@@ -48,21 +50,19 @@ public abstract class ResubmitCheckAspect {
                 sb.append(String.join("", v));
             }
         });
-        log.debug("REQ: ttl {} {}", formRepeatSubmitValidation.ttl(), sb.toString());
-        checkResubmit(sb.toString(), formRepeatSubmitValidation.ttl());
+
+        log.debug("resubmit check {}", authorization);
+        String key = String.format("resubmit_check:%s:%s", SpringUtil.getApplicationName(), SecureUtil.md5(sb.toString()));
+        RedissonClient redissonClient = SpringUtil.getBean(RedissonClient.class);
+        RLock lock = redissonClient.getLock(key);
+        if (!lock.tryLock()) {
+            throw new ResubmitException();
+        }
+        Object ret = joinPoint.proceed();
+        if (lock.isHeldByCurrentThread()) {
+            lock.unlock();
+        }
+        return ret;
     }
 
-    protected void checkResubmit(String key, int ttl) {
-        String md5Key = SecureUtil.md5(key);
-        RedissonClient redissonClient = SpringUtil.getBean(RedissonClient.class);
-        RLock lock = redissonClient.getLock("resubmit_check:" + SpringUtil.getApplicationName() + ":" + md5Key);
-        try {
-            boolean tryLock = lock.tryLock(0, ttl, TimeUnit.SECONDS);
-            if (!tryLock) {
-                throw new ResubmitException();
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
 }
