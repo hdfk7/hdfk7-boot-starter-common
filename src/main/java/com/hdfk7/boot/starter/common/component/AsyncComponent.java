@@ -2,7 +2,6 @@ package com.hdfk7.boot.starter.common.component;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -14,7 +13,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class AsyncComponent {
 
     @Bean
-    @Primary
     public TaskExecutor shortTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         int core = Runtime.getRuntime().availableProcessors();
