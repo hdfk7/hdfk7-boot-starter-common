@@ -16,7 +16,7 @@ import java.io.OutputStream;
 
 public class JSONCodec extends BaseCodec {
     public static final JSONCodec INSTANCE = new JSONCodec();
-    private final ObjectMapper mapObjectMapper = JacksonObjectMapperInstance.getMapper();
+    private final ObjectMapper mapObjectMapper = JacksonObjectMapperInstance.getNonFinalMapper();
     private final Encoder encoder = in -> {
         ByteBuf out = ByteBufAllocator.DEFAULT.buffer();
         try {
