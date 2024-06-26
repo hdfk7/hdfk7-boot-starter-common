@@ -2,6 +2,7 @@ package com.hdfk7.boot.starter.common.aspect;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import com.hdfk7.boot.starter.common.properties.HttpHeaderProperties;
 import com.hdfk7.proto.base.annotation.ResubmitCheck;
 import com.hdfk7.proto.base.exception.ResubmitException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,6 @@ import java.util.Map;
 
 @Slf4j
 public abstract class ResubmitCheckAspect {
-    protected static final String TOKEN = "TOKEN";
 
     public Object doTask(ProceedingJoinPoint joinPoint, ResubmitCheck resubmitCheck) throws Throwable {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -26,10 +26,11 @@ public abstract class ResubmitCheckAspect {
             return joinPoint.proceed();
         }
 
+        String token = SpringUtil.getBean(HttpHeaderProperties.class).getTokenName();
         HttpServletRequest request = sra.getRequest();
-        String authorization = request.getHeader(TOKEN);
+        String authorization = request.getHeader(token);
         if (StringUtils.isEmpty(authorization)) {
-            authorization = request.getParameter(TOKEN);
+            authorization = request.getParameter(token);
         }
         if (StringUtils.isEmpty(authorization)) {
             return joinPoint.proceed();
