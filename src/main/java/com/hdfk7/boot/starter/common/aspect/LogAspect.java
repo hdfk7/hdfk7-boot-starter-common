@@ -87,7 +87,7 @@ public abstract class LogAspect {
         int remotePort = request.getRemotePort();
 
         log.info(String.format("cost[%d],url[%s],httpMethod[%s],remoteHost[%s],remotePort[%d]," +
-                "request[%s],response[%s]\r\n", cost, url, httpMethod, remoteHost, remotePort, parameters, response));
+                "request[%s],response[%s]", cost, url, httpMethod, remoteHost, remotePort, parameters, response));
     }
 
     protected boolean ignoreRequest(String methodName, String method) {
