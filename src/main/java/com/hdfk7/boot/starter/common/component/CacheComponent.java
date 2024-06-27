@@ -19,11 +19,11 @@ import java.time.Duration;
 
 @Slf4j
 @Component
-@ConditionalOnClass({CacheManager.class, RedisConnectionFactory.class, org.springframework.data.redis.cache.RedisCacheManager.class})
+@ConditionalOnClass(value = {CacheManager.class, RedisConnectionFactory.class, org.springframework.data.redis.cache.RedisCacheManager.class})
 public class CacheComponent {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(value = {CacheManager.class})
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .computePrefixWith(name -> name + ":")

@@ -2,6 +2,7 @@ package com.hdfk7.boot.starter.common.component;
 
 import com.hdfk7.proto.base.json.JacksonObjectMapperInstance;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -10,10 +11,11 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnClass(value = {RedisConnectionFactory.class})
+@ConditionalOnClass(value = {RedisTemplate.class, RedisConnectionFactory.class})
 public class RedisTemplateComponent {
 
     @Bean
+    @ConditionalOnMissingBean(value = {RedisTemplate.class})
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);

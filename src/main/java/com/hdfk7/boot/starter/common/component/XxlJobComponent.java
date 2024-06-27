@@ -5,6 +5,7 @@ import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ public class XxlJobComponent {
     private final XxlJobProperties xxlJobProperties;
 
     @Bean
+    @ConditionalOnMissingBean(value = {XxlJobSpringExecutor.class})
     public XxlJobSpringExecutor xxlJobSpringExecutor() {
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(xxlJobProperties.getAdminAddresses());

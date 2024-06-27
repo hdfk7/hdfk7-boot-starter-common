@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@ConditionalOnClass(RestTemplate.class)
+@ConditionalOnClass(value = {RestTemplate.class})
 public class RestTemplateComponent {
 
     @Bean
     @LoadBalanced
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(value = {RestTemplate.class})
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }

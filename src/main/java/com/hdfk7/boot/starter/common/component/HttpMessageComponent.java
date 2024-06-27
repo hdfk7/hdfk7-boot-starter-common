@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@ConditionalOnClass({HttpMessageConverter.class, HttpMessageConverters.class})
+@ConditionalOnClass(value = {HttpMessageConverters.class, HttpMessageConverter.class})
 public class HttpMessageComponent {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(value = {HttpMessageConverters.class})
     public HttpMessageConverters httpMessageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
         List<HttpMessageConverter<?>> list = converters.orderedStream().collect(Collectors.toList());
         list.removeIf(o -> o instanceof MappingJackson2HttpMessageConverter);
