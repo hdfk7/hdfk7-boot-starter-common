@@ -28,16 +28,7 @@ public abstract class LogAspect {
             return;
         }
 
-        List<Object> argList = new ArrayList<>();
-        for (Object arg : joinPoint.getArgs()) {
-            if (!(arg instanceof BindingResult
-                    || arg instanceof ServletRequest
-                    || arg instanceof ServletResponse
-                    || arg instanceof MultipartFile)) {
-                argList.add(arg);
-            }
-        }
-        String parameters = JSONUtil.toJsonStr(argList);
+        String parameters = JSONUtil.toJsonStr(filterArgs(joinPoint.getArgs()));
         HttpServletRequest request = sra.getRequest();
         request.setAttribute(RequestParamConst.REQUEST_START_TIME, System.currentTimeMillis());
         request.setAttribute(RequestParamConst.METHOD_NAME, joinPoint.getSignature().getName());
@@ -79,6 +70,20 @@ public abstract class LogAspect {
         int port = request.getRemotePort();
 
         log.info(String.format("%d|%s|%s|%s|%d|%s|%s", cost, method, url, host, port, parameters, response));
+    }
+
+    protected List<Object> filterArgs(Object[] args) {
+        List<Object> list = new ArrayList<>(args.length);
+        for (Object arg : args) {
+            if (!(arg instanceof ServletRequest
+                    || arg instanceof ServletResponse
+                    || arg instanceof MultipartFile
+                    || arg instanceof BindingResult
+                    || arg instanceof Throwable)) {
+                list.add(arg);
+            }
+        }
+        return list;
     }
 
 }
