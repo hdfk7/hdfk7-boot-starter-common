@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>hdfk7-boot-starter-common</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
     <name>hdfk7-boot-starter-common</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
     <description>
@@ -38,7 +38,7 @@
     </scm>
 
     <properties>
-        <hdfk7-common-proto.version>1.0.7-SNAPSHOT</hdfk7-common-proto.version>
+        <hdfk7-common-proto.version>1.0.9-SNAPSHOT</hdfk7-common-proto.version>
     </properties>
 
     <dependencies>
