@@ -1,9 +1,9 @@
 package cn.hdfk7.boot.starter.common.aspect;
 
+import cn.hdfk7.boot.starter.common.constants.RequestParamConst;
 import cn.hdfk7.boot.starter.common.util.IpUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.json.JSONUtil;
-import cn.hdfk7.boot.starter.common.constants.RequestParamConst;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public abstract class LogAspect {
         String method = sra.getRequest().getMethod();
         String host = IpUtil.getIpAddress(request);
         int port = request.getRemotePort();
-        log.info(String.format("%s|%s|%s|%d", method, url, host, port));
+        log.debug("{}|{}|{}|{}", method, url, host, port);
     }
 
     public Object doTask(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -69,7 +69,7 @@ public abstract class LogAspect {
         String host = IpUtil.getIpAddress(request);
         int port = request.getRemotePort();
 
-        log.info(String.format("%d|%s|%s|%s|%d|%s|%s", cost, method, url, host, port, parameters, response));
+        log.debug("{}|{}|{}|{}|{}|{}|{}", cost, method, url, host, port, parameters, response);
     }
 
     protected List<Object> filterArgs(Object[] args) {

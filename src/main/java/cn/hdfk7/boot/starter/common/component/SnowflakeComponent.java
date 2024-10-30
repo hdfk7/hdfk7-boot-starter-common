@@ -1,6 +1,7 @@
 package cn.hdfk7.boot.starter.common.component;
 
 import cn.hutool.core.date.SystemClock;
+import cn.hutool.core.util.ObjUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +73,8 @@ public class SnowflakeComponent {
      */
     protected long getMaxWorkerId() {
         Long dcId = stringRedisTemplate.opsForValue().increment("sequence:" + appName + ":workerId");
-        log.info("workerId:{}", dcId);
-        if (dcId >= Integer.MAX_VALUE) {
+        log.debug("workerId:{}", dcId);
+        if (ObjUtil.isNull(dcId) || dcId >= Integer.MAX_VALUE) {
             dcId = 1L;
             stringRedisTemplate.opsForValue().set("sequence:" + appName + ":workerId", "1");
         }
@@ -85,8 +86,8 @@ public class SnowflakeComponent {
      */
     protected long getDatacenterId() {
         Long dcId = stringRedisTemplate.opsForValue().increment("sequence:" + appName + ":dataCenterId");
-        log.info("dcId:{}", dcId);
-        if (dcId >= Integer.MAX_VALUE) {
+        log.debug("dcId:{}", dcId);
+        if (ObjUtil.isNull(dcId) || dcId >= Integer.MAX_VALUE) {
             dcId = 1L;
             stringRedisTemplate.opsForValue().set("sequence:" + appName + ":dataCenterId", "1");
         }
