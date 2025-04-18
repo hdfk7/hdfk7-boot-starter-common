@@ -1,7 +1,7 @@
 package cn.hdfk7.boot.starter.common.component;
 
-import cn.hdfk7.boot.starter.common.cache.RedisCacheManager;
 import cn.hdfk7.boot.proto.base.json.JacksonObjectMapperInstance;
+import cn.hdfk7.boot.starter.common.cache.RedisCacheManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,7 +19,7 @@ import java.time.Duration;
 
 @Slf4j
 @Component
-@ConditionalOnClass(value = {CacheManager.class, RedisConnectionFactory.class, org.springframework.data.redis.cache.RedisCacheManager.class})
+@ConditionalOnClass(value = {CacheManager.class, RedisConnectionFactory.class, RedisCacheManager.class})
 public class CacheComponent {
 
     @Bean
