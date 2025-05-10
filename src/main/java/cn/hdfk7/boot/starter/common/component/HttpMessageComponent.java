@@ -1,6 +1,6 @@
 package cn.hdfk7.boot.starter.common.component;
 
-import cn.hdfk7.boot.proto.base.json.JacksonObjectMapperInstance;
+import cn.hdfk7.boot.proto.base.json.JacksonInstance;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,7 +22,7 @@ public class HttpMessageComponent {
     public HttpMessageConverters httpMessageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
         List<HttpMessageConverter<?>> list = converters.orderedStream().collect(Collectors.toList());
         list.removeIf(o -> o instanceof MappingJackson2HttpMessageConverter);
-        list.add(new MappingJackson2HttpMessageConverter(JacksonObjectMapperInstance.getMapper()));
+        list.add(new MappingJackson2HttpMessageConverter(JacksonInstance.getMapper()));
         return new HttpMessageConverters(list);
     }
 

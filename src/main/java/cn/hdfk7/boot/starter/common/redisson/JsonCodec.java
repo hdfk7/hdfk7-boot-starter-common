@@ -1,7 +1,7 @@
 package cn.hdfk7.boot.starter.common.redisson;
 
+import cn.hdfk7.boot.proto.base.json.JacksonInstance;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cn.hdfk7.boot.proto.base.json.JacksonObjectMapperInstance;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufInputStream;
@@ -16,7 +16,7 @@ import java.io.OutputStream;
 
 public class JsonCodec extends BaseCodec {
     public static final JsonCodec INSTANCE = new JsonCodec();
-    private final ObjectMapper mapObjectMapper = JacksonObjectMapperInstance.getNonFinalMapper();
+    private final ObjectMapper mapObjectMapper = JacksonInstance.getNonFinalMapper();
     private final Encoder encoder = in -> {
         ByteBuf out = ByteBufAllocator.DEFAULT.buffer();
         try {

@@ -1,16 +1,17 @@
 package cn.hdfk7.boot.starter.common.aspect;
 
-import cn.hutool.crypto.SecureUtil;
-import cn.hutool.extra.spring.SpringUtil;
-import cn.hdfk7.boot.starter.common.properties.HttpHeaderProperties;
 import cn.hdfk7.boot.proto.base.annotation.ResubmitCheck;
 import cn.hdfk7.boot.proto.base.exception.ResubmitException;
+import cn.hdfk7.boot.starter.common.properties.HttpHeaderProperties;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -37,7 +38,7 @@ public abstract class ResubmitCheckAspect {
         }
 
         String methodType = request.getMethod();
-        if (Arrays.stream(resubmitCheck.methods()).noneMatch(o -> o.equalsIgnoreCase(methodType))) {
+        if (Arrays.stream(resubmitCheck.methods()).noneMatch(o -> o == RequestMethod.resolve(methodType))) {
             return joinPoint.proceed();
         }
 

@@ -1,6 +1,6 @@
 package cn.hdfk7.boot.starter.common.component;
 
-import cn.hdfk7.boot.proto.base.json.JacksonObjectMapperInstance;
+import cn.hdfk7.boot.proto.base.json.JacksonInstance;
 import cn.hdfk7.boot.starter.common.cache.RedisCacheManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -28,7 +28,7 @@ public class CacheComponent {
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .computePrefixWith(name -> name + ":")
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(JacksonObjectMapperInstance.getNonFinalMapper())))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(JacksonInstance.getNonFinalMapper())))
                 .entryTtl(Duration.ofDays(1));
         return new RedisCacheManager(RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory), defaultCacheConfig);
     }

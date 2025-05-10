@@ -3,7 +3,5 @@ build/*
 target/*
 *.iml
 */target/*
-data/*
 */*.iml
 .DS_Store
-

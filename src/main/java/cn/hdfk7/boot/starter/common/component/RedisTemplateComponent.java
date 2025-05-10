@@ -1,6 +1,6 @@
 package cn.hdfk7.boot.starter.common.component;
 
-import cn.hdfk7.boot.proto.base.json.JacksonObjectMapperInstance;
+import cn.hdfk7.boot.proto.base.json.JacksonInstance;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ public class RedisTemplateComponent {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
-        GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer(JacksonObjectMapperInstance.getMapper());
+        GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer(JacksonInstance.getMapper());
 
         redisTemplate.setKeySerializer(new GenericToStringSerializer<>(Object.class));
         redisTemplate.setValueSerializer(genericJackson2JsonRedisSerializer);
